@@ -1,0 +1,133 @@
+<%@page import="com.kautilya.util.context.ContextResolver"%>
+<%@page import="com.ost.kautilya.core.report.ReportMetaData"%>
+<%@page import="com.kautilya.KautilyaContext"%>
+<%@page import="com.kautilya.taglib.D3Report"%>
+<%@page autoFlush="true" contentType="text/html" pageEncoding="UTF-8"
+	language="java"%>
+<%
+	KautilyaContext kc = KautilyaContext.getContext(request, response);
+	D3Report rpt = (D3Report) kc.getReport();
+	ReportMetaData meta = rpt.getReportMetaData();
+%>
+<head></head>
+<jsp:include page="d3.jsp"></jsp:include>
+<link rel="stylesheet" href="../css/slick.grid.css" type="text/css" />
+<link rel="stylesheet" href="../css/slick.pager.css" type="text/css" />
+<link rel="stylesheet" href="../css/slick.columnpicker.css" type="text/css" />
+<link rel="stylesheet" type="text/css"
+	href="<%=ContextResolver
+					.getApplicationContextInvertedPath(request)%>css/parallel.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=ContextResolver
+					.getApplicationContextInvertedPath(request)%>css/slick.grid.css">
+<script type="text/javascript"
+	src="<%=ContextResolver
+					.getApplicationContextInvertedPath(request)%>Js/d3/ext/parallel.js"></script>
+<script src="../Js/jQuery/plugins/jquery.event.drag.js"></script>
+<script src="../Js/jQuery/plugins/slick.core.js"></script>
+<script src="../Js/jQuery/plugins/slick.formatters.js"></script>
+<script src="../Js/jQuery/plugins/slick.editors.js"></script>
+<script src="../Js/jQuery/plugins/slick.cellrangedecorator.js"></script>
+<script src="../Js/jQuery/plugins/slick.cellrangeselector.js"></script>
+<script src="../Js/jQuery/plugins/slick.cellselectionmodel.js"></script>
+<script src="../Js/jQuery/plugins/slick.grid.js"></script>
+<script src="../Js/jQuery/plugins/slick.groupitemmetadataprovider.js"></script>
+<script src="../Js/jQuery/plugins/slick.dataview.js"></script>
+<script src="../Js/jQuery/plugins/slick.pager.js"></script>
+<script src="../Js/jQuery/plugins/slick.columnpicker.js"></script>
+<script type="text/javascript">
+	var tree = null;
+	var wtf = 0.85;
+	var htf = 0.90;
+	var bd = document.getElementsByTagName("body")[0];
+	d3r.report.on.change = function(event) {
+		d3r.report.getData(function(data) {
+			if (tree && tree.option && tree.update) {
+				tree.option({
+					data : data
+				});
+				tree.update();
+			}
+		}, bd, "Re-calculating");
+	};
+	function init() {
+		var rf = 0.5;
+		var h = window.document.documentElement.offsetHeight * htf;
+		var w = window.document.documentElement.offsetWidth * wtf;
+		bd.style.width = w + "px";
+		bd.style.height = h + "px";
+		d3r.report.getData(function(data) {
+			tree = new Parallel({
+				data : data,
+				container : document.querySelector("svg#container"),
+			});
+		}, bd);
+		window.onresize = function() {
+			if (tree && tree != null) {
+				var bd = document.getElementsByTagName("body")[0];
+				var h = window.document.documentElement.offsetHeight * htf;
+				var w = window.document.documentElement.offsetWidth * wtf;
+				bd.style.width = w + "px";
+				bd.style.height = h + "px";
+				tree.option({
+					dim : [ h, w ],
+					data : tree.options.data
+				});
+				tree.update();
+			}
+		};
+	}
+	function begin() {
+		d3r.report.updateMetaData(init, arguments);
+	}
+</script>
+<body onload="begin()">
+	<div id="metrics" class="metrics"></div>
+	<div id="myGrid">Table :</div>
+	<svg id="container" class="body">
+		<g class="foreground"></g>
+		<g class="traits"></g></svg>
+	<table class="measures">
+		<thead>
+			<tr>
+				<th id="name" colspan="2"></th>
+			</tr>
+		</thead>
+		<tbody id="total">
+			<tr>
+				<td id="pie" style="text-align: center;" colspan="2" valign="top">
+					<svg class="tot">
+							<g class="arc"></g>
+	  					</svg>
+				</td>
+			</tr>
+			<tr>
+				<td valign="top" style="text-align: center;">
+					<table style="width: auto; padding: 0.2em;">
+						<thead class="list">
+							<tr></tr>
+						</thead>
+						<tbody class="list"></tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot style="display: none;">
+			<tr style="display: none;">
+				<th id="tfld" colspan="2" nowrap="nowrap"></th>
+			</tr>
+			<tr style="display: none;">
+				<th colspan="2" style="padding: 1em;"><svg class="dist">
+						<g class="xsc"></g>
+						<g class="ysc"></g>
+						<g class="rects"></g>
+					</svg></th>
+			</tr>
+		</tfoot>
+	</table>
+	<div class="legends">
+		<svg class="legends">
+			<g class="lvis"></g></svg>
+	</div>
+</body>
+</body>

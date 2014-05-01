@@ -1,0 +1,33 @@
+for (var k = 0; k < obj.data.totalFields.length; k++) {
+					var f = obj.data.fields[obj.data.totalFields[k]];
+					d[f.rptfldid] = d.measures[k].metrics[m0];
+				}
+				d[d.fldid] = d.name;
+				return d.name + "." + m0;
+			});
+    grid = new Slick.Grid("#myGrid", data, tCol, options);
+    
+    
+    
+    
+	$("#myGrid").css({
+		top : h + tt + tt + 10,
+		left : lt,
+		width : w + lt + lt,
+		height : tw - (h + tt + tt + 10),
+	});
+
+	for(var i = 0; i < obj.data.totalFields.length; i++){
+		f = obj.data.fields[obj.data.totalFields[i]];
+		tCol.push({
+			id : f.rptfldid,
+			name: f.flddesc,
+			field: f.rptfldid,
+			index: i
+		});
+	}
+	
+	  var options = {
+			    enableCellNavigation: false,
+			    enableColumnReorder: false
+			  };
